@@ -4,6 +4,12 @@
   "y": 0,
   "uniqueID": "id-74",
   "name": "select.FacesByEdge",
+  "ioValues": [
+    {
+      "name": "selectedEdges",
+      "ioValue": "__GEOMETRY_INPUT__"
+    }
+  ],
   "topLevel": true,
   "allAtoms": [
     {
@@ -17,9 +23,43 @@
           "ioValue": "__GEOMETRY_INPUT__"
         }
       ]
+    },
+    {
+      "atomType": "Code",
+      "x": 0.30078125,
+      "y": 0.5171428571428571,
+      "uniqueID": "id-77",
+      "ioValues": [
+        {
+          "name": "a1",
+          "ioValue": "__GEOMETRY_INPUT__"
+        }
+      ],
+      "interpreterVersion": 1,
+      "code": "// select.adjascentFaces\nfunction run(a1: Assembly) {\n  return a1.onLeafs((leaf) => {\n    if (!leaf.is3D()) {\n      return leaf;\n    }\n    if (leaf.selection == undefined || leaf.selection.edges == undefined) {\n      leaf.selection = { edges: [], faces: [], part: false }\n      return leaf;\n    }\n    const edgeSelectionIndexes = leaf.selection.edges;\n    const shapeEdges = leaf.geometry.edges;\n    const edgeIndex = (edge) => {\n      return shapeEdges.findIndex((e) => e.isSame(edge))\n    }\n    const selectedFaceIndexes = new Set<number>()\n    leaf.geometry.faces.forEach((face, index) => {\n      const faceEdges = face.edges;\n      if (faceEdges.some((e) => edgeSelectionIndexes.includes(edgeIndex(e)))) {\n        selectedFaceIndexes.add(index)\n      }\n    })\n    leaf.selection.faces = [...selectedFaceIndexes]\n    return leaf;\n  })\n}",
+      "compiledCode": "\"use strict\";\n// select.adjascentFaces\nfunction run(a1) {\n    return a1.onLeafs((leaf) => {\n        if (!leaf.is3D()) {\n            return leaf;\n        }\n        if (leaf.selection == undefined || leaf.selection.edges == undefined) {\n            leaf.selection = { edges: [], faces: [], part: false };\n            return leaf;\n        }\n        const edgeSelectionIndexes = leaf.selection.edges;\n        const shapeEdges = leaf.geometry.edges;\n        const edgeIndex = (edge) => {\n            return shapeEdges.findIndex((e) => e.isSame(edge));\n        };\n        const selectedFaceIndexes = new Set();\n        leaf.geometry.faces.forEach((face, index) => {\n            const faceEdges = face.edges;\n            if (faceEdges.some((e) => edgeSelectionIndexes.includes(edgeIndex(e)))) {\n                selectedFaceIndexes.add(index);\n            }\n        });\n        leaf.selection.faces = [...selectedFaceIndexes];\n        return leaf;\n    });\n}\n"
+    },
+    {
+      "atomType": "Input",
+      "x": 0.0231,
+      "y": 0.32,
+      "uniqueID": "id-87",
+      "name": "selectedEdges",
+      "type": "geometry"
     }
   ],
-  "allConnectors": [],
+  "allConnectors": [
+    {
+      "ap2Name": "number or geometry",
+      "ap1ID": "id-77",
+      "ap2ID": "id-75"
+    },
+    {
+      "ap2Name": "a1",
+      "ap1ID": "id-87",
+      "ap2ID": "id-77"
+    }
+  ],
   "unitsKey": "Unitless",
   "fileTypeVersion": 1,
   "filetypeVersion": 1
